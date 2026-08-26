@@ -29,8 +29,11 @@ people by hand. Two fields do most of the work: *fixed rate ends* and *review du
 npm install
 cp .env.example .env      # add your Anthropic API key and a password
 npm run seed              # loads the templates (add --demo for example people)
-npm start                 # http://localhost:3000
+npm start                 # http://localhost:4600
 ```
+
+Set `PORT` in `.env` to use a different one. If that port is already taken the
+app moves to the next free port and prints the address it actually opened on.
 
 ## How the daily list is decided
 

@@ -2,7 +2,8 @@
 
 ## Every morning
 
-Open the page. It tells you who to talk to today.
+Open the page. It's at **http://localhost:4600** unless you were told otherwise —
+when you start the app it prints the exact address to open, so use whatever it says. It tells you who to talk to today.
 
 For each person you'll see **why** they've come up — their rate is ending, they
 replied to you, you haven't spoken in months — and a message already written.

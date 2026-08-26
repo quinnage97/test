@@ -324,5 +324,21 @@ app.use((err, req, res, next) => {
     <p style="margin-top:20px"><a class="btn" href="/">Back to today</a></p></div>` }));
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Follow-up running on http://localhost:${port}`));
+// Start on PORT (or 4600), and if something else already has that port, walk up
+// until we find a free one. He should never meet the words EADDRINUSE.
+const wanted = Number(process.env.PORT) || 4600;
+
+function listen(port, attemptsLeft = 15) {
+  const server = app.listen(port, () =>
+    console.log(`\n  Follow-up is running.\n  Open this in your browser:  http://localhost:${port}\n`));
+
+  server.on("error", (err) => {
+    if (err.code === "EADDRINUSE" && attemptsLeft > 0) {
+      console.log(`  Port ${port} is busy, trying ${port + 1}...`);
+      return listen(port + 1, attemptsLeft - 1);
+    }
+    throw err;
+  });
+}
+
+listen(wanted);
