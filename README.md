@@ -117,3 +117,11 @@ scripts/backup.js      timestamped database copies, last 30 kept
 No build step, no framework, no client-side app. If the AI is unreachable the
 list still renders with the plain approved template — his day is never blocked
 by an API.
+
+---
+
+## Also in this repository
+
+**[`blockclerk/`](blockclerk)** — a separate product, for a different buyer:
+service charge and heat network compliance documents for the people responsible
+for blocks of flats in England. Its own README is in that directory.
