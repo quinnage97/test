@@ -88,10 +88,15 @@
   const tabs = $$(".tabs button");
   function showTab(name) {
     tabs.forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === name)));
-    $$(".panel").forEach((p) => (p.hidden = p.id !== "tab-" + name));
+    $$(".panel").forEach((p) => {
+      const show = p.id === "tab-" + name;
+      // The map panel stays laid out off-screen so it can load in the background
+      if (p.id === "tab-map") { p.hidden = false; p.classList.toggle("offscreen", !show); p.setAttribute("aria-hidden", String(!show)); }
+      else p.hidden = !show;
+    });
     if (name === "map") {
       initMap();
-      setTimeout(() => map.invalidateSize(), 0);
+      map.invalidateSize();
     }
     if (location.hash !== "#" + name) history.replaceState(null, "", "#" + name);
   }
@@ -261,6 +266,9 @@
     } else {
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
+        crossOrigin: true,     // lets the service worker cache tiles properly
+        keepBuffer: 6,         // keep more tiles around the view so panning is instant
+        updateWhenIdle: false,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
     }
@@ -291,14 +299,14 @@
     if (!activeCats.has(p.cat)) { activeCats.add(p.cat); map.addLayer(layers[p.cat]); renderFilters(); }
     const inCity = p.lat > 47.24 && p.lat < 47.315 && p.lng > 11.36 && p.lng < 11.45;
     const zoom = p.cat === "transport" && !p.id.startsWith("t-ibk") ? 11 : inCity ? 16 : 14;
-    map.flyTo([p.lat, p.lng], zoom, { duration: 0.8 });
-    map.once("moveend", () => markers[id]?.openPopup());
+    map.setView([p.lat, p.lng], zoom, { animate: false });
+    markers[id]?.openPopup();
   }
 
-  $("#viewCity").addEventListener("click", () => map.flyToBounds(INNSBRUCK_VIEW, { duration: 0.8 }));
+  $("#viewCity").addEventListener("click", () => map.fitBounds(INNSBRUCK_VIEW));
   $("#viewJourney").addEventListener("click", () => {
     const pts = [...new Set([...T.route.flights.flat(), ...T.route.ground])].map((id) => [basePlaces[id].lat, basePlaces[id].lng]);
-    map.flyToBounds(pts, { padding: [30, 30], duration: 0.8 });
+    map.fitBounds(pts, { padding: [30, 30] });
   });
 
   function startPinMode(saveId) {
@@ -607,6 +615,12 @@
   }
   renderAll();
   syncHeaderHeight();
+  // Build the map straight away (off-screen) so its streets are loaded before the Map tab is opened
+  if (window.L) setTimeout(() => initMap(), 0);
+  // Cache map tiles and the site on the device (GitHub Pages / any https host)
+  if ("serviceWorker" in navigator && location.protocol === "https:" && !window.TRIP_NO_EMBEDS) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
   const TAB_NAMES = ["timeline", "map", "itinerary"];
   const fromHash = () => { const h = location.hash.replace(/^#\/?/, ""); return TAB_NAMES.includes(h) ? h : null; };
   showTab(fromHash() || "timeline");

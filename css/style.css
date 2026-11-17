@@ -159,6 +159,7 @@ input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px s
 .chip[aria-pressed="false"] { opacity: .45; }
 .map-views { display: flex; gap: 6px; }
 #leafletMap { flex: 1; min-height: 300px; }
+#tab-map.offscreen { position: fixed; top: 0; left: -200vw; width: 100vw; visibility: hidden; pointer-events: none; }
 #leafletMap.no-tiles { background: #e8eee9; }
 .map-note { background: rgba(255,255,255,.92); padding: 6px 10px; border-radius: 8px; font-size: .78rem; max-width: 260px; color: var(--ink); box-shadow: var(--shadow); }
 .pin-banner { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 16px; background: #8e44ad; color: #fff; font-size: .9rem; }
