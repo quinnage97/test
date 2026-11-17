@@ -621,7 +621,7 @@
   if ("serviceWorker" in navigator && location.protocol === "https:" && !window.TRIP_NO_EMBEDS) {
     navigator.serviceWorker.register("sw.js").catch(() => {});
   }
-  const TAB_NAMES = ["timeline", "map", "itinerary"];
+  const TAB_NAMES = ["timeline", "map", "itinerary", "phrases"];
   const fromHash = () => { const h = location.hash.replace(/^#\/?/, ""); return TAB_NAMES.includes(h) ? h : null; };
   showTab(fromHash() || "timeline");
   window.addEventListener("hashchange", () => { const t = fromHash(); if (t) showTab(t); });
