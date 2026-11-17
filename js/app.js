@@ -190,6 +190,7 @@
       ${how}
       <div class="links">
         <a href="${directionsUrl(p)}" target="_blank" rel="noopener">Directions ↗</a>
+        <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.lat},${p.lng}" target="_blank" rel="noopener">Street View ↗</a>
         ${ig}
       </div>
     </div>`;
@@ -242,10 +243,9 @@
       note.onAdd = () => Object.assign(document.createElement("div"), { className: "map-note", textContent: "Street map not available in this version. Tap a pin, then Directions to open Google Maps." });
       note.addTo(map);
     } else {
-      const tiles = window.TRIP_TILES || { url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", options: { maxZoom: 19, subdomains: "abcd" } };
-      L.tileLayer(tiles.url, {
-        ...tiles.options,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
     }
     Object.keys(T.categories).forEach((k) => { layers[k] = L.layerGroup().addTo(map); });
@@ -273,7 +273,8 @@
     if (!p) { toast("That place isn't on the map yet"); return; }
     showTab("map");
     if (!activeCats.has(p.cat)) { activeCats.add(p.cat); map.addLayer(layers[p.cat]); renderFilters(); }
-    const zoom = p.cat === "transport" && !p.id.startsWith("t-ibk") ? 11 : 16;
+    const inCity = p.lat > 47.24 && p.lat < 47.315 && p.lng > 11.36 && p.lng < 11.45;
+    const zoom = p.cat === "transport" && !p.id.startsWith("t-ibk") ? 11 : inCity ? 16 : 14;
     map.flyTo([p.lat, p.lng], zoom, { duration: 0.8 });
     map.once("moveend", () => markers[id]?.openPopup());
   }
