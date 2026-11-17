@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Innsbruck at Christmas</title>
+  <meta name="theme-color" content="#1d3b2f">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <h1>Innsbruck <span>at Christmas</span></h1>
+      <p class="route">Glasgow → Amsterdam → Munich → <em>Mittenwald line</em> → Innsbruck</p>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="timeline" aria-selected="true">Journey</button>
+      <button role="tab" data-tab="map" aria-selected="false">Map</button>
+      <button role="tab" data-tab="itinerary" aria-selected="false">Itinerary</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- JOURNEY TIMELINE -->
+    <section id="tab-timeline" class="panel" role="tabpanel">
+      <div class="wrap">
+        <div class="intro">
+          <label class="field inline">Trip starts
+            <input type="date" id="startDate">
+          </label>
+          <span class="progress-pill" id="overallProgress"></span>
+        </div>
+        <ol class="timeline" id="timeline"></ol>
+      </div>
+    </section>
+
+    <!-- MAP -->
+    <section id="tab-map" class="panel" role="tabpanel" hidden>
+      <div class="map-shell">
+        <div class="map-bar">
+          <div class="chips" id="mapFilters"></div>
+          <div class="map-views">
+            <button class="btn ghost sm" id="viewCity">Innsbruck</button>
+            <button class="btn ghost sm" id="viewJourney">Whole journey</button>
+          </div>
+        </div>
+        <div id="pinBanner" class="pin-banner" hidden>
+          <span>Tap the map to drop a pin for <strong id="pinName"></strong></span>
+          <button class="btn sm" id="pinCancel">Cancel</button>
+        </div>
+        <div id="map"></div>
+      </div>
+    </section>
+
+    <!-- ITINERARY -->
+    <section id="tab-itinerary" class="panel" role="tabpanel" hidden>
+      <div class="wrap itin-grid">
+        <div class="itin-main">
+          <div class="section-head">
+            <h2>Day by day</h2>
+            <p class="hint">Tap any stop to see it on the map.</p>
+          </div>
+          <div id="days"></div>
+          <div class="row gap">
+            <button class="btn ghost" id="addDay">+ Add a day</button>
+          </div>
+        </div>
+
+        <aside class="itin-side">
+          <div class="card">
+            <h2>Instagram saves</h2>
+            <p class="hint">Paste a link to a post or reel you want to visit.</p>
+            <form id="igForm" class="stack">
+              <input type="url" id="igUrl" placeholder="https://www.instagram.com/p/…" required>
+              <input type="text" id="igTitle" placeholder="What is it? e.g. 'Cosy café with cinnamon buns'">
+              <div class="row gap">
+                <select id="igCat"></select>
+                <button class="btn" type="submit">Add</button>
+              </div>
+              <p class="form-msg" id="igMsg" role="status"></p>
+            </form>
+            <ul class="saves" id="saves"></ul>
+          </div>
+
+          <div class="card">
+            <h2>Austrian food bucket list</h2>
+            <p class="hint"><span id="foodCount"></span> tried</p>
+            <ul class="foods" id="foods"></ul>
+          </div>
+
+          <div class="card subtle">
+            <h2>Your data</h2>
+            <p class="hint">Everything you add is saved in this browser only. Export it to back up or move it to another phone.</p>
+            <div class="row gap wrap-row">
+              <button class="btn ghost sm" id="exportBtn">Export</button>
+              <label class="btn ghost sm file-btn">Import<input type="file" id="importFile" accept="application/json"></label>
+              <button class="btn ghost sm danger" id="resetBtn">Reset to suggestions</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- Add/edit stop dialog -->
+  <dialog id="itemDialog">
+    <form method="dialog" id="itemForm" class="stack">
+      <h3 id="itemDialogTitle">Add a stop</h3>
+      <label class="field">What
+        <input type="text" id="itemTitle" required>
+      </label>
+      <div class="row gap">
+        <label class="field">When
+          <input type="text" id="itemTime" placeholder="e.g. 10:00 or Evening">
+        </label>
+        <label class="field">Day
+          <select id="itemDay"></select>
+        </label>
+      </div>
+      <label class="field">Place on the map
+        <select id="itemPlace"></select>
+      </label>
+      <label class="field">Notes
+        <textarea id="itemNote" rows="2"></textarea>
+      </label>
+      <div class="row gap end">
+        <button class="btn ghost" value="cancel" formnovalidate>Cancel</button>
+        <button class="btn" value="save" id="itemSave">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
