@@ -180,8 +180,11 @@ input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px s
 .pop p { margin: 6px 0; font-size: .86rem; line-height: 1.45; }
 .pop .how { background: var(--cream); padding: 8px 10px; border-radius: 8px; }
 .pop .how strong { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
-.pop .links { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; font-size: .84rem; font-weight: 600; }
+.pop .links { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 10px; font-size: .8rem; font-weight: 600; }
 .pop .links a { color: var(--pine); }
+.pop .links-label { width: 100%; font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.pop .links a.map-btn { background: var(--pine); color: #fff; text-decoration: none; padding: 6px 10px; border-radius: 8px; }
+.pop .links a.map-btn.ghost { background: transparent; color: var(--pine); border: 1px solid var(--line); }
 .leaflet-tooltip.hover-tip { font-family: Inter, system-ui, sans-serif; font-weight: 600; font-size: .8rem; }
 
 /* ---------- Itinerary ---------- */

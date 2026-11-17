@@ -80,7 +80,9 @@
     return [...T.places, ...saved];
   }
   const placeById = (id) => basePlaces[id] || allPlaces().find((p) => p.id === id);
-  const directionsUrl = (p) => `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=${p.cat === "transport" ? "transit" : "walking"}`;
+  const byTransit = (p) => p.cat === "transport";
+  const directionsUrl = (p) => `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=${byTransit(p) ? "transit" : "walking"}`;
+  const appleMapsUrl = (p) => `https://maps.apple.com/?daddr=${p.lat},${p.lng}&q=${encodeURIComponent(p.name)}&dirflg=${byTransit(p) ? "r" : "w"}`;
 
   // ---------------- Tabs ----------------
   const tabs = $$(".tabs button");
@@ -201,8 +203,10 @@
       ${p.desc ? `<p>${esc(p.desc)}</p>` : ""}
       ${how}
       <div class="links">
-        <a href="${directionsUrl(p)}" target="_blank" rel="noopener">Directions ↗</a>
-        <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.lat},${p.lng}" target="_blank" rel="noopener">Street View ↗</a>
+        <span class="links-label">Directions</span>
+        <a class="map-btn" href="${directionsUrl(p)}" target="_blank" rel="noopener">Google Maps</a>
+        <a class="map-btn" href="${appleMapsUrl(p)}" target="_blank" rel="noopener">Apple Maps</a>
+        <a class="map-btn ghost" href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.lat},${p.lng}" target="_blank" rel="noopener">Street View</a>
         ${ig}
       </div>
     </div>`;
