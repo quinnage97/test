@@ -37,6 +37,17 @@
     try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
   }
 
+  // Two-tap confirm (browser confirm() dialogs are blocked in some embeds)
+  function confirmTap(btn, prompt) {
+    if (btn.dataset.armed === "1") { delete btn.dataset.armed; return true; }
+    btn.dataset.armed = "1";
+    const old = btn.innerHTML;
+    btn.innerHTML = esc(prompt);
+    btn.classList.add("armed");
+    setTimeout(() => { if (btn.isConnected && btn.dataset.armed) { delete btn.dataset.armed; btn.innerHTML = old; btn.classList.remove("armed"); } }, 3000);
+    return false;
+  }
+
   function toast(msg) {
     const el = document.createElement("div");
     el.className = "toast";
@@ -69,7 +80,7 @@
       initMap();
       setTimeout(() => map.invalidateSize(), 0);
     }
-    if (location.hash !== "#/" + name) history.replaceState(null, "", "#/" + name);
+    if (location.hash !== "#" + name) history.replaceState(null, "", "#" + name);
   }
   tabs.forEach((b) => b.addEventListener("click", () => { if (b.dataset.tab !== "map") endPinMode(); showTab(b.dataset.tab); }));
 
@@ -85,7 +96,7 @@
   const checkKey = (stageId, kind, i) => `${stageId}:${kind}:${i}`;
 
   function renderTimeline() {
-    const ol = $("#timeline");
+    const ol = $("#timelineList");
     let total = 0, doneTotal = 0;
     ol.innerHTML = T.stages.map((s) => {
       const items = stageItems(s);
@@ -123,7 +134,7 @@
     $("#overallProgress").textContent = `${doneTotal} of ${total} ticked off`;
   }
 
-  $("#timeline").addEventListener("click", (e) => {
+  $("#timelineList").addEventListener("click", (e) => {
     const head = e.target.closest(".stage-head");
     if (head) {
       const id = head.closest(".stage").dataset.stage;
@@ -134,13 +145,13 @@
     const go = e.target.closest("[data-goto]");
     if (go) goToPlace(go.dataset.goto);
   });
-  $("#timeline").addEventListener("change", (e) => {
+  $("#timelineList").addEventListener("change", (e) => {
     const key = e.target.dataset.check;
     if (!key) return;
     if (e.target.checked) state.checks[key] = true; else delete state.checks[key];
     save(); renderTimeline();
   });
-  $("#timeline").addEventListener("input", (e) => {
+  $("#timelineList").addEventListener("input", (e) => {
     const id = e.target.dataset.note;
     if (!id) return;
     state.stageNotes[id] = e.target.value;
@@ -223,11 +234,20 @@
 
   function initMap() {
     if (map) return;
-    map = L.map("map", { zoomControl: true, tap: true }).fitBounds(INNSBRUCK_VIEW);
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-      maxZoom: 19, subdomains: "abcd",
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-    }).addTo(map);
+    map = L.map("leafletMap", { zoomControl: true, tap: true }).fitBounds(INNSBRUCK_VIEW);
+    if (window.TRIP_TILES === false) {
+      // No street tiles available here: plain background + a note
+      $("#leafletMap").classList.add("no-tiles");
+      const note = L.control({ position: "bottomleft" });
+      note.onAdd = () => Object.assign(document.createElement("div"), { className: "map-note", textContent: "Street map not available in this version. Tap a pin, then Directions to open Google Maps." });
+      note.addTo(map);
+    } else {
+      const tiles = window.TRIP_TILES || { url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", options: { maxZoom: 19, subdomains: "abcd" } };
+      L.tileLayer(tiles.url, {
+        ...tiles.options,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+      }).addTo(map);
+    }
     Object.keys(T.categories).forEach((k) => { layers[k] = L.layerGroup().addTo(map); });
     buildRoute();
     routeLayer.addTo(map);
@@ -271,13 +291,13 @@
     showTab("map");
     $("#pinName").textContent = s.title;
     $("#pinBanner").hidden = false;
-    $("#map").style.cursor = "crosshair";
+    $("#leafletMap").style.cursor = "crosshair";
     setTimeout(() => map.invalidateSize(), 0);
   }
   function endPinMode() {
     pinTarget = null;
     $("#pinBanner").hidden = true;
-    $("#map").style.cursor = "";
+    $("#leafletMap").style.cursor = "";
   }
   $("#pinCancel").addEventListener("click", endPinMode);
 
@@ -339,7 +359,7 @@
         if (idx > 0) { [day.items[idx - 1], day.items[idx]] = [day.items[idx], day.items[idx - 1]]; save(); renderDays(); }
         break;
       case "del-day":
-        if (!day.items.length || confirm(`Remove "${day.title}" and its ${day.items.length} stops?`)) {
+        if (!day.items.length || confirmTap(btn, "Tap again to remove day")) {
           state.days = state.days.filter((d) => d !== day); save(); renderDays(); renderSaves();
         }
         break;
@@ -460,7 +480,7 @@
             ? `<button class="btn ghost sm" data-sact="show">Show on map</button><button class="btn ghost sm" data-sact="pin">Move pin</button>`
             : `<button class="btn sm" data-sact="pin">📍 Pin on map</button>`}
           <select data-sact="addday" aria-label="Add to a day"><option value="">+ Add to day…</option>${state.days.map((d, i) => `<option value="${d.id}">Day ${i + 1} — ${esc(d.title)}</option>`).join("")}</select>
-          <button class="btn ghost sm" data-sact="preview">Preview</button>
+          ${window.TRIP_NO_EMBEDS ? `<a class="btn ghost sm" href="${esc(s.url)}" target="_blank" rel="noopener">Open ↗</a>` : `<button class="btn ghost sm" data-sact="preview">Preview</button>`}
         </div>
         <div class="ig-embed" hidden></div>
       </li>`;
@@ -474,7 +494,7 @@
     const s = state.saves.find((x) => x.id === li.dataset.save);
     switch (btn.dataset.sact) {
       case "del":
-        if (!confirm(`Delete "${s.title}"?`)) return;
+        if (!confirmTap(btn, "Delete?")) return;
         state.saves = state.saves.filter((x) => x !== s);
         state.days.forEach((d) => d.items.forEach((it) => { if (it.place === "save-" + s.id) it.place = ""; }));
         save(); renderSaves(); renderDays(); if (map) buildMarkers();
@@ -524,31 +544,43 @@
   });
 
   // ---------------- Export / import / reset ----------------
+  // Export copies a backup code; Import takes that code (or an exported .json file)
   $("#exportBtn").addEventListener("click", () => {
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "innsbruck-trip.json";
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    const text = JSON.stringify(state);
+    const box = $("#backupBox");
+    box.hidden = false;
+    box.value = text;
+    const fallback = () => { box.focus(); box.select(); toast("Select all and copy the backup text"); };
+    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(() => toast("Backup copied — paste it somewhere safe"), fallback);
+    else fallback();
+  });
+  function importText(text) {
+    try {
+      const data = JSON.parse(text);
+      if (!Array.isArray(data.days)) throw new Error("bad");
+      state = Object.assign(seedState(), data);
+      save(); renderAll(); if (map) buildMarkers();
+      toast("Trip imported");
+      return true;
+    } catch { toast("That isn't a valid trip backup"); return false; }
+  }
+  $("#importPasteBtn").addEventListener("click", () => {
+    const box = $("#backupBox");
+    if (box.hidden || !box.value.trim()) { box.hidden = false; box.value = ""; box.placeholder = "Paste a backup here, then tap Import again"; box.focus(); return; }
+    if (importText(box.value.trim())) { box.value = ""; box.hidden = true; }
   });
   $("#importFile").addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    try {
-      const data = JSON.parse(await file.text());
-      if (!Array.isArray(data.days)) throw new Error("bad file");
-      state = Object.assign(seedState(), data);
-      save(); renderAll(); if (map) buildMarkers();
-      toast("Trip imported");
-    } catch { toast("Couldn't read that file"); }
+    importText(await file.text());
     e.target.value = "";
   });
-  $("#resetBtn").addEventListener("click", () => {
-    if (!confirm("Reset the itinerary to the suggested plan? Your ticks, notes and Instagram saves are kept.")) return;
+  $("#resetBtn").addEventListener("click", (e) => {
+    if (!confirmTap(e.currentTarget, "Tap again to reset the plan")) return;
     const fresh = seedState();
     state.days = fresh.days;
     save(); renderDays(); renderSaves();
+    toast("Itinerary reset — ticks, notes and saves kept");
   });
 
   // ---------------- Boot ----------------
@@ -558,6 +590,8 @@
   }
   renderAll();
   syncHeaderHeight();
-  const initial = location.hash.replace(/^#\/?/, "");
-  showTab(["timeline", "map", "itinerary"].includes(initial) ? initial : "timeline");
+  const TAB_NAMES = ["timeline", "map", "itinerary"];
+  const fromHash = () => { const h = location.hash.replace(/^#\/?/, ""); return TAB_NAMES.includes(h) ? h : null; };
+  showTab(fromHash() || "timeline");
+  window.addEventListener("hashchange", () => { const t = fromHash(); if (t) showTab(t); });
 })();

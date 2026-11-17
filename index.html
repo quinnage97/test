@@ -34,7 +34,7 @@
           </label>
           <span class="progress-pill" id="overallProgress"></span>
         </div>
-        <ol class="timeline" id="timeline"></ol>
+        <ol class="timeline" id="timelineList"></ol>
       </div>
     </section>
 
@@ -52,7 +52,7 @@
           <span>Tap the map to drop a pin for <strong id="pinName"></strong></span>
           <button class="btn sm" id="pinCancel">Cancel</button>
         </div>
-        <div id="map"></div>
+        <div id="leafletMap"></div>
       </div>
     </section>
 
@@ -94,12 +94,14 @@
 
           <div class="card subtle">
             <h2>Your data</h2>
-            <p class="hint">Everything you add is saved in this browser only. Export it to back up or move it to another phone.</p>
+            <p class="hint">Everything you add is saved in this browser only. Copy a backup and paste it on another phone to move your plan across.</p>
             <div class="row gap wrap-row">
-              <button class="btn ghost sm" id="exportBtn">Export</button>
-              <label class="btn ghost sm file-btn">Import<input type="file" id="importFile" accept="application/json"></label>
+              <button class="btn ghost sm" id="exportBtn">Copy backup</button>
+              <button class="btn ghost sm" id="importPasteBtn">Import backup</button>
+              <label class="btn ghost sm file-btn">Import file<input type="file" id="importFile" accept="application/json"></label>
               <button class="btn ghost sm danger" id="resetBtn">Reset to suggestions</button>
             </div>
+            <textarea id="backupBox" rows="3" hidden aria-label="Trip backup"></textarea>
           </div>
         </aside>
       </div>
