@@ -3,18 +3,26 @@
 
 window.TRIP = {
   title: "Innsbruck at Christmas",
+  startDate: "2026-11-29",
 
   categories: {
     market:    { label: "Christmas markets", color: "#c0392b", icon: "★" },
     coffee:    { label: "Coffee & cake",     color: "#8e5a2b", icon: "☕" },
     food:      { label: "Restaurants",       color: "#d68910", icon: "🍽" },
     gem:       { label: "Sights & hidden gems", color: "#1f7a5a", icon: "◆" },
+    stay:      { label: "Our hotel",         color: "#1d3b2f", icon: "⌂" },
     transport: { label: "Getting around",    color: "#2e5c8a", icon: "🚆" },
     saved:     { label: "My Instagram saves", color: "#8e44ad", icon: "♥" }
   },
 
   // ---------- Places on the map ----------
   places: [
+    // Where we're staying
+    { id: "hotel", cat: "stay", name: "Motel One Innsbruck",
+      lat: 47.26170, lng: 11.40060,
+      desc: "Our hotel: Südbahnstraße 1, right beside Innsbruck Hbf. Room: THE ONE with a view. Reception open 24 h, free luggage storage.",
+      howto: "From Innsbruck Hbf: it's right next to the station on Südbahnstraße, a 2–3 min walk. The Old Town is ~15 min walk north up Maria-Theresien-Straße." },
+
     // Christmas markets
     { id: "mkt-altstadt", cat: "market", name: "Old Town Christmas Market",
       lat: 47.26859, lng: 11.39327,
@@ -164,12 +172,12 @@ window.TRIP = {
       howto: "Train: ~10 min from Innsbruck Hbf." },
 
     // Transport hubs
-    { id: "t-gla", cat: "transport", name: "Glasgow Airport (GLA)", lat: 55.87190, lng: -4.43310,
-      desc: "Start of the trip.", howto: "Arrive at least 2 h before your flight." },
+    { id: "t-edi", cat: "transport", name: "Edinburgh Airport (EDI)", lat: 55.95000, lng: -3.37250,
+      desc: "Start of the trip: KL922 departs 05:40 on Sun 29 Nov. We land back here at 23:05 on Wed 2 Dec.", howto: "Aim to arrive by ~03:40. Book a taxi or check night bus times in advance." },
     { id: "t-ams", cat: "transport", name: "Amsterdam Schiphol (AMS)", lat: 52.31050, lng: 4.76830,
-      desc: "Connection. You enter the Schengen area here — passport control between the two flights.", howto: "Follow 'Transfer' signs — not 'Exit'." },
+      desc: "Connection both ways. Outbound: land 08:15, KL1851 to Munich leaves 09:30 (1 h 15 min). Return: land 21:40, KL933 to Edinburgh leaves 22:40 (1 h).", howto: "Follow 'Transfer' signs — not 'Exit'. Passport control is between the two flights." },
     { id: "t-muc", cat: "transport", name: "Munich Airport (MUC)", lat: 48.35380, lng: 11.78610,
-      desc: "Land, collect bags, then the S-Bahn into the city.", howto: "Follow the green 'S' signs to the S-Bahn station between Terminals 1 and 2." },
+      desc: "Terminal 1 both ways. Land 10:55 on Sun 29 Nov; KL1858 home leaves 20:05 on Wed 2 Dec.", howto: "Follow the green 'S' signs to the S-Bahn station in the central area between Terminals 1 and 2." },
     { id: "t-munhbf", cat: "transport", name: "München Hauptbahnhof", lat: 48.14020, lng: 11.55840,
       desc: "Munich main station — start of the Mittenwald line to Innsbruck.", howto: "S1 or S8 from the airport, ~40–45 min." },
     { id: "t-garmisch", cat: "transport", name: "Garmisch-Partenkirchen", lat: 47.49250, lng: 11.09600,
@@ -184,66 +192,81 @@ window.TRIP = {
 
   // Journey line drawn on the map (overview)
   route: {
-    flights: [["t-gla", "t-ams"], ["t-ams", "t-muc"]],
+    flights: [["t-edi", "t-ams"], ["t-ams", "t-muc"]],
     ground: ["t-muc", "t-munhbf", "t-garmisch", "t-mittenwald", "t-seefeld", "t-ibkhbf"]
   },
 
   // ---------- Timeline stages ----------
+  // `booking` rows show as fixed facts at the top of each stage.
   stages: [
-    { id: "prep", icon: "🧳", title: "Before you go", sub: "At home in Glasgow", place: null,
+    { id: "prep", icon: "🧳", title: "Before you go", sub: "At home in Edinburgh", place: null,
+      booking: [["Trip", "Sun 29 Nov → Wed 2 Dec 2026"], ["Flights", "KLM, economy, 2 adults"], ["Hotel", "Motel One Innsbruck, 3 nights"]],
       need: ["Passports — must be under 10 years old on arrival and valid 3+ months after you leave the EU",
              "Check whether the EU's ETIAS travel authorisation applies by your travel date",
              "GHIC card + travel insurance",
              "Euros (cash is still king at the Christmas markets)",
              "EU plug adaptors (Type F/C)",
-             "Warm layers, waterproof boots, hat & gloves — Innsbruck is often below 0°C in December"],
-      todo: ["Check in online for both flights",
-             "Book train / buy ticket for Munich → Innsbruck",
-             "Download the DB Navigator and ÖBB apps",
-             "Download offline Google Maps for Innsbruck & Munich",
+             "Warm layers, waterproof boots, hat & gloves — Innsbruck is often below 0°C in late November"],
+      todo: ["Check in online for KL922 (KLM check-in opens 30 h before — from Fri 27 Nov, 23:40)",
+             "Book a taxi (or check night buses) to Edinburgh Airport for ~03:30 on Sun 29 Nov",
+             "Plan how to get home from Edinburgh Airport at ~23:30 on Wed 2 Dec",
+             "Decide on Munich → Innsbruck train tickets",
              "Book dinners at popular restaurants (Weisses Rössl, Die Wilderin)",
+             "Download the DB Navigator and ÖBB apps + offline Google Maps for Innsbruck & Munich",
              "Tell your bank you're travelling"],
-      tips: ["Check this year's Christmas market dates — most Innsbruck markets run mid-November to late December; the Old Town one usually runs until 6 January."] },
+      tips: ["Sun 29 Nov 2026 is the first Sunday of Advent, so the Christmas markets will be open and in full swing.",
+             "Join Motel One's free beOne programme if you want online check-in."] },
 
-    { id: "gla", icon: "✈️", title: "Glasgow Airport", sub: "GLA → Amsterdam", place: "t-gla",
-      need: ["Passports & boarding passes", "Liquids in a clear bag (check GLA's current limits)", "Phone charger / power bank"],
-      todo: ["Arrive 2 h before departure", "Drop bags (checked through to Munich?)", "Ask at the desk if bags are checked through to MUC"],
-      tips: ["If you're on one booking, bags should be checked all the way to Munich — confirm at the desk so you don't need to collect them in Amsterdam."] },
+    { id: "edi", icon: "✈️", title: "Edinburgh Airport", sub: "Sun 29 Nov · KL922 to Amsterdam", place: "t-edi",
+      booking: [["Flight", "KL922 · Airbus A321neo"], ["Departs", "05:40 Edinburgh (EDI)"], ["Arrives", "08:15 Amsterdam (AMS)"], ["Duration", "1 h 35 min"]],
+      need: ["Passports & boarding passes", "Liquids in a clear bag (check EDI's current limits)", "Phone charger / power bank"],
+      todo: ["Arrive by ~03:40", "Drop bags", "Confirm at the desk that bags are checked through to Munich"],
+      tips: ["Both flights are on one KLM booking, so your bags should go straight through to Munich. You won't need to collect them in Amsterdam."] },
 
-    { id: "ams", icon: "🔁", title: "Change at Amsterdam Schiphol", sub: "AMS → Munich", place: "t-ams",
-      need: ["Passports out for passport control", "Boarding pass for the Munich flight"],
+    { id: "ams", icon: "🔁", title: "Change at Amsterdam Schiphol", sub: "Sun 29 Nov · KL1851 to Munich", place: "t-ams",
+      booking: [["Transfer time", "1 h 15 min"], ["Flight", "KL1851 · Boeing 737-900"], ["Departs", "09:30 Amsterdam (AMS)"], ["Arrives", "10:55 Munich (MUC) Terminal 1"], ["Duration", "1 h 25 min"]],
+      need: ["Passports out for passport control", "Boarding pass for KL1851"],
       todo: ["Follow 'Transfer' signs", "Go through passport control (entering Schengen)", "Find your gate for Munich"],
-      tips: ["This is where you enter the Schengen area, so you go through passport control (and the EU Entry/Exit System biometrics) here — queues can be long, so don't dawdle.",
-             "The Amsterdam → Munich flight is inside Schengen: no passport check when you land in Munich."] },
+      tips: ["This is where you enter the Schengen area, so passport control (and the EU Entry/Exit System biometrics) happens here. With 1 h 15 min, head straight there — no browsing first.",
+             "Amsterdam → Munich is inside Schengen: no passport check when you land."] },
 
-    { id: "muc", icon: "🛬", title: "Munich Airport", sub: "MUC → München Hbf by S-Bahn", place: "t-muc",
-      need: ["Ticket for the S-Bahn (or a ticket that covers it)"],
-      todo: ["Collect bags", "Follow green 'S' signs to the S-Bahn", "Take S1 or S8 to München Hauptbahnhof (~40–45 min)"],
-      tips: ["Buy tickets at the machines or in the MVV / DB Navigator app. If you're using a Bayern-Ticket or Deutschlandticket, check it covers the S-Bahn leg too."] },
+    { id: "muc", icon: "🛬", title: "Munich Airport", sub: "Sun 29 Nov · 10:55, Terminal 1 → S-Bahn", place: "t-muc",
+      booking: [["Land", "10:55 Terminal 1"], ["Next", "S1 or S8 to München Hbf (~40–45 min)"]],
+      need: ["Ticket for the S-Bahn (or a day ticket that covers it)"],
+      todo: ["Collect bags", "Follow green 'S' signs to the S-Bahn", "Take S1 or S8 to München Hauptbahnhof"],
+      tips: ["Buy tickets at the machines or in the MVV / DB Navigator app. If you're using a Bayern-Ticket or Deutschlandticket, check it covers the S-Bahn too.",
+             "You should reach München Hbf around 12:30, in time for an early-afternoon train."] },
 
-    { id: "train", icon: "🚆", title: "Train: the Mittenwald line", sub: "München Hbf → Garmisch → Mittenwald → Innsbruck", place: "t-munhbf",
+    { id: "train", icon: "🚆", title: "Train: the Mittenwald line", sub: "Sun 29 Nov · München Hbf → Garmisch → Mittenwald → Innsbruck", place: "t-munhbf",
+      booking: [["Journey time", "~2 h 45 min – 3 h"], ["Arrive", "Mid/late afternoon — hotel check-in opens 15:00"]],
       need: ["Train ticket (DB/ÖBB) — or a Bayern-Ticket/Deutschlandticket if valid for your trip", "Snacks & water", "Camera!"],
       todo: ["Find the train to Innsbruck via Garmisch-Partenkirchen / Mittenwald (often RB 6)",
              "Check if your train splits or needs a change at Garmisch or Mittenwald",
              "Sit on the right-hand side for the descent into Innsbruck"],
-      tips: ["Roughly 2 h 45 min to 3 h. One of the most scenic train rides in the Alps — the final stretch from Seefeld drops along cliffs high above the Inn valley.",
-             "The Bayern-Ticket and the Deutschlandticket have historically been valid all the way to Innsbruck Hbf on this line — double-check before you buy."] },
+      tips: ["One of the most scenic train rides in the Alps. The final stretch from Seefeld drops along cliffs high above the Inn valley.",
+             "The Bayern-Ticket and the Deutschlandticket have historically been valid all the way to Innsbruck Hbf on this line. Double-check before you buy."] },
 
-    { id: "arrive", icon: "🏔", title: "Arrive in Innsbruck", sub: "Innsbruck Hbf → hotel", place: "t-ibkhbf",
-      need: ["Hotel address & booking reference"],
-      todo: ["Check in", "Pick up an Innsbruck Card (covers Nordkette, museums, buses & trams)", "First Glühwein at the Old Town market 🎄"],
-      tips: ["The Old Town is ~15 min walk north of the station. Many hotels give a free Welcome Card for local buses — ask at check-in."] },
+    { id: "arrive", icon: "🏨", title: "Check in: Motel One Innsbruck", sub: "Sun 29 Nov · Südbahnstraße 1, next to Innsbruck Hbf", place: "hotel",
+      booking: [["Address", "Südbahnstraße 1 / Top 1, 6020 Innsbruck"], ["Phone", "+43 512 219353-0"], ["Stay", "Sun 29 Nov → Wed 2 Dec (3 nights)"], ["Room", "THE ONE with a view · 2 adults"],
+                ["Check-in", "From 15:00"], ["Check-out", "By 12:00"], ["Breakfast", "Mon–Fri 06:00–10:00 · Sat/Sun 07:00–11:00"], ["Reception", "24 hours · free luggage storage"],
+                ["City tax", "€4 per person per night, paid at the hotel (€24 for us)"]],
+      need: ["Passports for check-in", "Card for the city tax"],
+      todo: ["Check in", "Ask about a Welcome Card for local buses", "Consider an Innsbruck Card (Nordkette, museums, buses & trams)", "First Glühwein at the Old Town market 🎄"],
+      tips: ["The hotel is right by the station, so it's a 2–3 minute walk with your bags. The Old Town is about 15 minutes' walk north."] },
 
-    { id: "stay", icon: "🎄", title: "In Innsbruck", sub: "Coffee, food, markets & hidden gems", place: "mkt-altstadt",
+    { id: "stay", icon: "🎄", title: "In Innsbruck", sub: "Mon 30 Nov – Tue 1 Dec · coffee, food, markets & hidden gems", place: "mkt-altstadt",
       need: ["Small change for mug deposits (Pfand) — return the mug for your money back or keep it as a souvenir",
              "Innsbruck Card (if you bought one)"],
-      todo: ["Visit every Innsbruck Christmas market", "Ride up to the Nordkette", "Try everything on the food list", "Day trip to Hall in Tirol"],
+      todo: ["Visit the Innsbruck Christmas markets", "Ride up to the Nordkette (pick the clearest day)", "Try everything on the food list", "Hall in Tirol advent market"],
       tips: ["See the Itinerary tab for the day-by-day plan and the Map tab for everything plotted."] },
 
-    { id: "home", icon: "🏠", title: "Heading home", sub: "Innsbruck → Munich → Amsterdam → Glasgow", place: "t-ibkhbf",
+    { id: "home", icon: "🏠", title: "Heading home", sub: "Wed 2 Dec · Innsbruck → Munich → Amsterdam → Edinburgh", place: "t-muc",
+      booking: [["Check-out", "By 12:00 (leave bags at reception)"], ["Be at MUC", "By ~18:00, Terminal 1"],
+                ["Flight 1", "KL1858 · 20:05 Munich T1 → 21:40 Amsterdam"], ["Transfer", "1 h at Schiphol"], ["Flight 2", "KL933 · 22:40 Amsterdam → 23:05 Edinburgh"]],
       need: ["Passports", "Boarding passes", "Room in the bag for speck, schnapps & Christmas mugs"],
-      todo: ["Check out", "Train back to Munich via Mittenwald (allow plenty of buffer for the airport)", "S-Bahn to MUC", "Exit Schengen at Amsterdam passport control"],
-      tips: ["Leave a generous buffer: the Mittenwald line is single-track in places and delays can happen. Aim to be at MUC 2 h+ before your flight."] }
+      todo: ["Check out by 12:00 and leave bags at reception", "Collect bags and get the train to Munich (~13:30 via Mittenwald)", "S-Bahn S1/S8 to Munich Airport", "At Schiphol: go straight through passport control (leaving Schengen)", "Get home from Edinburgh Airport"],
+      tips: ["Leave a generous buffer: the Mittenwald line is single-track in places. A faster option back is the train via Kufstein and Rosenheim (about 1 h 45 min to München Hbf).",
+             "The Schiphol connection is only 1 hour and includes passport control, so don't stop on the way."] }
   ],
 
   // ---------- Austrian food bucket list ----------
@@ -267,48 +290,43 @@ window.TRIP = {
   // ---------- Suggested itinerary (you can edit all of this in the app) ----------
   itinerary: [
     { title: "Travel day", items: [
-      { time: "Morning", title: "Fly Glasgow → Amsterdam", place: "t-gla" },
-      { time: "Midday", title: "Change at Schiphol (passport control)", place: "t-ams" },
-      { time: "Afternoon", title: "Land in Munich, S-Bahn to Hbf", place: "t-muc" },
-      { time: "Afternoon", title: "Mittenwald line to Innsbruck", place: "t-munhbf" },
-      { time: "Evening", title: "First Glühwein at the Old Town market", place: "mkt-altstadt" }
+      { time: "05:40", title: "KL922 Edinburgh → Amsterdam", place: "t-edi" },
+      { time: "09:30", title: "KL1851 Amsterdam → Munich", place: "t-ams" },
+      { time: "10:55", title: "Land MUC T1, S-Bahn to München Hbf", place: "t-muc" },
+      { time: "~12:30", title: "Mittenwald line to Innsbruck", place: "t-munhbf" },
+      { time: "15:30", title: "Check in at Motel One", place: "hotel" },
+      { time: "17:00", title: "First Glühwein at the Old Town market", place: "mkt-altstadt" },
+      { time: "19:00", title: "Easy dinner at Stiftskeller", place: "food-stiftskeller" }
     ]},
     { title: "Old Town & the big markets", items: [
-      { time: "09:00", title: "Breakfast at Café Katzung", place: "cof-katzung" },
-      { time: "10:00", title: "Golden Roof & climb the City Tower", place: "gem-stadtturm" },
-      { time: "11:30", title: "Hofkirche & the bronze 'Black Men'", place: "gem-hofkirche" },
-      { time: "13:00", title: "Lunch at Gasthaus Goldenes Dachl", place: "food-dachl" },
-      { time: "15:00", title: "Strudel at Kröll", place: "cof-kroll" },
-      { time: "16:30", title: "Colourful houses at dusk", place: "gem-colourful" },
-      { time: "17:00", title: "Marktplatz market — try Kiachl", place: "mkt-marktplatz" },
-      { time: "19:30", title: "Dinner at Stiftskeller", place: "food-stiftskeller" }
-    ]},
-    { title: "Into the mountains", items: [
-      { time: "09:30", title: "Hungerburgbahn from Congress", place: "gem-congress" },
-      { time: "10:00", title: "Nordkette cable car to Seegrube", place: "gem-nordkette" },
-      { time: "14:00", title: "Sachertorte at Café Sacher", place: "cof-sacher" },
-      { time: "16:30", title: "Back up for the Hungerburg panorama market", place: "mkt-hungerburg" },
+      { time: "08:30", title: "Breakfast at Café Katzung", place: "cof-katzung" },
+      { time: "09:30", title: "Golden Roof & climb the City Tower", place: "gem-stadtturm" },
+      { time: "10:30", title: "Hofkirche & the bronze 'Black Men'", place: "gem-hofkirche" },
+      { time: "12:30", title: "Lunch at Gasthaus Goldenes Dachl", place: "food-dachl" },
+      { time: "14:30", title: "Strudel at Kröll", place: "cof-kroll" },
+      { time: "16:00", title: "Colourful houses at dusk", place: "gem-colourful" },
+      { time: "16:30", title: "Marktplatz market — try Kiachl", place: "mkt-marktplatz" },
+      { time: "17:30", title: "Maria-Theresien-Straße market", place: "mkt-mts" },
       { time: "19:30", title: "Dinner at Weisses Rössl", place: "food-rossl" }
     ]},
-    { title: "Hall in Tirol & crystals", items: [
-      { time: "09:30", title: "Swarovski Crystal Worlds", place: "gem-swarovski" },
-      { time: "14:00", title: "Train to Hall in Tirol old town", place: "gem-hall" },
+    { title: "Mountains & Hall in Tirol", items: [
+      { time: "09:00", title: "Hungerburgbahn from Congress", place: "gem-congress" },
+      { time: "09:30", title: "Nordkette cable car to Seegrube", place: "gem-nordkette" },
+      { time: "13:00", title: "Sachertorte at Café Sacher", place: "cof-sacher" },
+      { time: "14:30", title: "Train to Hall in Tirol old town", place: "gem-hall" },
       { time: "16:00", title: "Hall advent market", place: "mkt-hall" },
-      { time: "19:30", title: "Drinks at the Viaduktbögen", place: "gem-viadukt" }
+      { time: "19:30", title: "Dinner at Die Wilderin", place: "food-wilderin" },
+      { time: "21:30", title: "Drinks at the Viaduktbögen", place: "gem-viadukt" }
     ]},
-    { title: "Local Innsbruck", items: [
-      { time: "10:00", title: "Brunch at The Breakfast Club", place: "cof-breakfast" },
-      { time: "11:30", title: "Bergisel Ski Jump", place: "gem-bergisel" },
-      { time: "13:30", title: "Wilten Basilica", place: "gem-wilten" },
-      { time: "14:30", title: "Wiltener Platzl market", place: "mkt-wilten" },
-      { time: "16:00", title: "Markthalle — buy speck & cheese", place: "food-markthalle" },
-      { time: "17:30", title: "Sunset drink at Lichtblick", place: "food-lichtblick" },
-      { time: "19:30", title: "Dinner at Die Wilderin", place: "food-wilderin" }
-    ]},
-    { title: "Last markets & home", items: [
-      { time: "09:00", title: "Coffee & biscuits at Munding", place: "cof-munding" },
-      { time: "10:00", title: "St. Nikolaus market", place: "mkt-nikolaus" },
-      { time: "12:00", title: "Train back to Munich", place: "t-ibkhbf" }
+    { title: "Last morning & home", items: [
+      { time: "08:30", title: "Coffee & biscuits at Munding", place: "cof-munding" },
+      { time: "09:30", title: "Markthalle — buy speck & cheese", place: "food-markthalle" },
+      { time: "10:30", title: "St. Nikolaus market", place: "mkt-nikolaus" },
+      { time: "11:45", title: "Check out, leave bags at reception", place: "hotel" },
+      { time: "13:30", title: "Train back to Munich", place: "t-ibkhbf" },
+      { time: "~18:00", title: "Munich Airport T1", place: "t-muc" },
+      { time: "20:05", title: "KL1858 Munich → Amsterdam", place: "t-muc" },
+      { time: "22:40", title: "KL933 Amsterdam → Edinburgh (lands 23:05)", place: "t-ams" }
     ]}
   ]
 };

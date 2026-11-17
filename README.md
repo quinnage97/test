@@ -1,11 +1,11 @@
 # Innsbruck at Christmas ✈️🚆🎄
 
-A small travel site for our trip: Glasgow → Amsterdam → Munich → the Mittenwald line → Innsbruck.
+A small travel site for our trip: Edinburgh → Amsterdam → Munich → the Mittenwald line → Innsbruck, 29 Nov – 2 Dec 2026, staying at Motel One Innsbruck.
 
 ## Tabs
 
-- **Journey**: a timeline of each stage of the trip (Glasgow Airport, the Schiphol connection, Munich, the Mittenwald train, Innsbruck, the trip home). Each stage has what you need, what to do, tips, a box for your flight numbers and booking refs, and a "Show on map" link. Ticks and notes are saved.
-- **Map**: an interactive map of Innsbruck with pins for every Christmas market (each says what it is and how to get there), coffee shops, restaurants, sights and hidden gems, and your own Instagram saves. You can filter by category, use "Whole journey" to see the route from Glasgow, and tap a pin for directions in Google Maps.
+- **Journey**: a timeline of each stage of the trip (Edinburgh Airport, the Schiphol connection, Munich, the Mittenwald train, hotel check-in, Innsbruck, the trip home). Each stage shows the flight or hotel details, what you need, what to do, tips, a notes box, and a "Show on map" link. Ticks and notes are saved.
+- **Map**: an interactive map of Innsbruck with pins for every Christmas market (each says what it is and how to get there), coffee shops, restaurants, sights and hidden gems, and your own Instagram saves. You can filter by category, use "Whole journey" to see the route from Edinburgh, and tap a pin for directions in Google Maps.
 - **Itinerary**: a day-by-day plan you can edit. Tap any stop to jump to it on the map. On the side:
   - **Instagram saves**: paste a post or reel link, give it a name, then pin it on the map and/or add it to a day.
   - **Austrian food bucket list**: tick things off as you try them.

@@ -9,9 +9,11 @@
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   // ---------------- State ----------------
+  const DATA_VERSION = 2; // bump when the built-in plan changes
   function seedState() {
     return {
-      startDate: "",
+      version: DATA_VERSION,
+      startDate: T.startDate || "",
       checks: {},
       stageNotes: {},
       foods: {},
@@ -28,7 +30,16 @@
   function load() {
     try {
       const raw = localStorage.getItem(STORE_KEY);
-      if (raw) return Object.assign(seedState(), JSON.parse(raw));
+      if (raw) {
+        const saved = JSON.parse(raw);
+        const fresh = seedState();
+        if ((saved.version || 1) < DATA_VERSION) {
+          // Built-in plan changed (real flights & hotel): take the new days, dates and checklists,
+          // keep the user's own notes, food ticks and Instagram saves.
+          return Object.assign(fresh, { stageNotes: saved.stageNotes || {}, foods: saved.foods || {}, saves: saved.saves || [] });
+        }
+        return Object.assign(fresh, saved);
+      }
     } catch (e) { /* storage unavailable or corrupt */ }
     return seedState();
   }
@@ -117,14 +128,15 @@
               <span class="chev">›</span>
             </button>
             <div class="stage-body">
+              ${s.booking?.length ? `<dl class="booking">${s.booking.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
               <div class="stage-cols">
                 <div><h4>What you need</h4><ul class="checklist">${list("need", s.need)}</ul></div>
                 <div><h4>What to do</h4><ul class="checklist">${list("todo", s.todo)}</ul></div>
               </div>
               ${s.tips?.length ? `<div class="tips">${s.tips.map((t) => `<p>💡 ${esc(t)}</p>`).join("")}</div>` : ""}
               <div class="stage-notes">
-                <h4>Your details (flight no., times, booking refs…)</h4>
-                <textarea data-note="${s.id}" placeholder="e.g. KL1478 dep 06:00 · seats 12A/B">${esc(state.stageNotes[s.id] || "")}</textarea>
+                <h4>Your notes (booking refs, seats, gates…)</h4>
+                <textarea data-note="${s.id}" placeholder="e.g. booking ref, seat numbers, gate">${esc(state.stageNotes[s.id] || "")}</textarea>
               </div>
               ${s.place ? `<div class="stage-actions"><button class="btn ghost sm" data-goto="${s.place}">Show on map →</button></div>` : ""}
             </div>
@@ -428,7 +440,7 @@
 
   // ---------------- Instagram saves ----------------
   $("#igCat").innerHTML = Object.entries(T.categories)
-    .filter(([k]) => k !== "transport")
+    .filter(([k]) => k !== "transport" && k !== "stay")
     .map(([k, c]) => `<option value="${k}" ${k === "saved" ? "selected" : ""}>${esc(c.label === "My Instagram saves" ? "Other / not sure" : c.label)}</option>`)
     .join("");
 
